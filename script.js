@@ -230,13 +230,13 @@ document.addEventListener('DOMContentLoaded', () => {
             filename: 'Quotation.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
-                scale: 2, // Higher scale for better clarity on live sites
+                scale: 2,
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 794 // Standard A4 pixel width at 96 DPI
+                windowWidth: 794
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
         };
