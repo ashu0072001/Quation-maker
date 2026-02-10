@@ -1,0 +1,485 @@
+/* ==========================================
+   DASHBOARD CSS - TechRedo Specification
+   ========================================== */
+
+/* Color Variables */
+:root {
+    --sidebar-bg: #0f172a;
+    --primary-action: #dc2626;
+    --action-hover: #b91c1c;
+    --page-bg: #f1f5f9;
+    --muted-text: #94a3b8;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--page-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* ==========================================
+   APP CONTAINER - SIDEBAR LAYOUT
+   ========================================== */
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ==========================================
+   SIDEBAR - DESKTOP (VERTICAL)
+   ========================================== */
+
+.sidebar {
+    background: var(--sidebar-bg);
+    color: white;
+    width: 256px;
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Brand */
+.brand {
+    margin-bottom: 2rem;
+}
+
+.brand h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+.tech-red {
+    color: var(--primary-action);
+}
+
+.redo-white {
+    color: white;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    margin-top: 0.25rem;
+}
+
+/* CTA Button */
+.btn-new {
+    background: var(--primary-action);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-new:hover {
+    background: var(--action-hover);
+}
+
+.btn-text-short {
+    display: none;
+}
+
+/* Navigation */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    color: var(--muted-text);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.nav-item:hover {
+    background: rgba(148, 163, 184, 0.1);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(220, 38, 38, 0.15);
+    color: white;
+}
+
+.nav-item i {
+    width: 1.25rem;
+    text-align: center;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    font-size: 0.7rem;
+    color: var(--muted-text);
+    text-align: center;
+}
+
+/* ==========================================
+   MAIN CONTENT
+   ========================================== */
+
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Content Header */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.content-header h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.version {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    background: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+/* ==========================================
+   CARDS GRID
+   ========================================== */
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+/* ==========================================
+   CARD COMPONENT
+   ========================================== */
+
+.quote-card {
+    background: var(--card-bg);
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.quote-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* External Link Icon */
+.external-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--muted-text);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.quote-card:hover .external-icon {
+    opacity: 1;
+}
+
+.external-icon:hover {
+    color: var(--primary-action);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.card-client-info h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.card-location {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.quote-number-badge {
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    font-size: 0.625rem;
+    font-family: 'Courier New', monospace;
+    padding: 0.375rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+/* Metrics Row */
+.metrics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metric-badge {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid;
+}
+
+.metric-badge.capacity {
+    background: #fff7ed;
+    border-color: #fed7aa;
+}
+
+.metric-badge.amount {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.metric-label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.metric-badge.capacity .metric-label {
+    color: #fb923c;
+}
+
+.metric-badge.amount .metric-label {
+    color: #4ade80;
+}
+
+.metric-value {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Card Footer */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.75rem;
+    color: var(--muted-text);
+}
+
+.card-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.view-details {
+    color: var(--muted-text);
+    transition: color 0.2s ease;
+}
+
+.quote-card:hover .view-details {
+    color: var(--primary-action);
+}
+
+/* ==========================================
+   EMPTY STATE
+   ========================================== */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: var(--muted-text);
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+/* ==========================================
+   LOADING STATE
+   ========================================== */
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary-action);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE - TABLET (768px - 1024px)
+   ========================================== */
+
+@media (max-width: 1024px) and (min-width: 768px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE - MOBILE (<768px)
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    /* Horizontal Sidebar */
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .brand {
+        margin-bottom: 0;
+    }
+
+    .brand h1 {
+        font-size: 1.25rem;
+    }
+
+    .subtitle {
+        display: none;
+    }
+
+    .btn-new {
+        width: auto;
+        padding: 0.625rem 1rem;
+        margin-bottom: 0;
+        font-size: 0.875rem;
+    }
+
+    .btn-text-full {
+        display: none;
+    }
+
+    .btn-text-short {
+        display: inline;
+    }
+
+    .nav-menu {
+        display: none;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 1rem;
+    }
+
+    .content-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .content-header h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Single Column Grid */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Smaller Cards */
+    .quote-card {
+        padding: 1rem;
+    }
+
+    .card-header h3 {
+        font-size: 1rem;
+    }
+
+    .metrics-row {
+        gap: 0.75rem;
+    }
+}

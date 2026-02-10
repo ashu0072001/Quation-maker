@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechRedo Quotation System</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Brand -->
+            <div class="brand">
+                <h1><span class="tech-red">Tech</span><span class="redo-white">Redo</span></h1>
+                <p class="subtitle">Quotation System</p>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="btn-new" onclick="window.location.href='generator.html'">
+                <i class="fas fa-plus"></i>
+                <span class="btn-text-full">New Quotation</span>
+                <span class="btn-text-short">New</span>
+            </button>
+
+            <!-- Navigation -->
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="generator.html" class="nav-item active">
+                    <i class="fas fa-plus"></i>
+                    <span>New Quotation</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="sidebar-footer">
+                <p>© 2026 TechRedo India Pvt Ltd</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h2>New Quotation</h2>
+                <span class="version">v1.2</span>
+            </header>
+
+            <div class="content-grid">
+                <!-- Form Section -->
+                <section class="form-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Create Quote</h3>
+                            <p>Enter details and BOQ specs.</p>
+                        </div>
+
+                        <form id="quoteForm" autocomplete="off">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clientName">Client Name</label>
+                                    <input type="text" id="clientName" name="client_name_x9k2" placeholder="Tech Redo"
+                                        autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="location">Location</label>
+                                    <input type="text" id="location" name="location_p7m3" placeholder="City"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quoteNo">Quote No. (QTN/...)</label>
+                                    <div class="quote-inputs">
+                                        <select id="quoteYear" name="year_q4n8" autocomplete="off">
+                                            <option value="" selected>YY-YY</option>
+                                            <option>25-26</option>
+                                            <option>26-27</option>
+                                            <option>27-28</option>
+                                        </select>
+                                        <select id="quoteMonth" name="month_r5t1" autocomplete="off">
+                                            <option value="" selected>MMM</option>
+                                            <option>FEB</option>
+                                            <option>MAR</option>
+                                            <option>APR</option>
+                                        </select>
+                                        <input type="text" id="quoteId" name="quote_id_w8j6" placeholder="23"
+                                            autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date">Date</label>
+                                    <input type="date" id="date" name="date_h3v9" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="mobile">Mobile</label>
+                                    <input type="tel" id="mobile" name="mobile_z2b5" placeholder="+91"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="authPerson">Auth. Person</label>
+                                    <input type="text" id="authPerson" name="auth_person_k6d4" placeholder="Name"
+                                        autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tiplContact">TIPL Contact</label>
+                                    <input type="text" id="tiplContact" name="tipl_contact_m1f7" placeholder="Name"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="boq-input-section"
+                                style="margin-bottom: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                                <label style="display:block; margin-bottom:15px; font-weight:600; color:#444;">BOQ
+                                    DETAILS</label>
+                                <style>
+                                    .boq-inputs-container {
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 8px;
+                                    }
+
+                                    .boq-row {
+                                        display: grid;
+                                        grid-template-columns: 30px 2fr 1.5fr 2fr 0.5fr 0.5fr;
+                                        gap: 8px;
+                                        align-items: center;
+                                    }
+
+                                    .boq-row label {
+                                        font-size: 0.8rem;
+                                        font-weight: 500;
+                                        color: #555;
+                                        white-space: nowrap;
+                                        justify-content: space-between;
+                                    }
+
+                                    /* Sr No logic: Add it to label via content if possible, or just use span */
+                                    .boq-row span:first-child {
+                                        font-weight: normal;
+                                        color: #888;
+                                        font-size: 0.8rem;
+                                        background: #eee;
+                                        padding: 2px 6px;
+                                        border-radius: 4px;
+                                    }
+
+                                    /* Inputs styling */
+                                    .boq-row input {
+                                        padding: 10px;
+                                        border: 1px solid #ced4da;
+                                        border-radius: 5px;
+                                        font-size: 0.9rem;
+                                        width: 100%;
+                                        box-sizing: border-box;
+                                        /* Fix alignment */
+                                    }
+
+                                    .boq-row input:focus {
+                                        border-color: #80bdff;
+                                        outline: 0;
+                                        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+                                    }
+
+                                    /* Specific Input Layouts for Mobile */
+                                    /* Make takes full width */
+                                    .boq-row input[id^="input_boq_make"] {
+                                        grid-column: 1 / -1;
+                                    }
+
+                                    /* Narration takes full width */
+                                    .boq-row input[id^="input_boq_narration"] {
+                                        grid-column: 1 / -1;
+                                    }
+
+                                    /* Qty and Unit share the bottom row (default 1fr 1fr matches grid) */
+
+                                    /* Placeholders for clarity on mobile */
+                                    /* We will need to rely on the placeholders in inputs, which I should ensure are set clearly */
+
+                                    /* Desktop Styles (> 768px) */
+                                    @media (min-width: 768px) {
+                                        .boq-header-row {
+                                            display: grid;
+                                            grid-template-columns: 40px 1.5fr 1fr 1.5fr 60px 40px;
+                                            gap: 10px;
+                                            font-weight: bold;
+                                            font-size: 0.85rem;
+                                            color: #6c757d;
+                                            margin-bottom: 10px;
+                                            padding: 0 10px;
+                                        }
+
+                                        .boq-row {
+                                            display: grid;
+                                            grid-template-columns: 40px 1.5fr 1fr 1.5fr 60px 40px;
+                                            gap: 10px;
+                                            align-items: center;
+                                            background: #fff;
+                                            border: none;
+                                            border-bottom: 1px solid #f1f1f1;
+                                            padding: 8px 5px;
+                                            box-shadow: none;
+                                            border-radius: 0;
+                                        }
+
+                                        /* Reset grid columns for inputs to respect row layout */
+                                        .boq-row input[id^="input_boq_make"],
+                                        .boq-row input[id^="input_boq_narration"] {
+                                            grid-column: auto;
+                                        }
+
+                                        .boq-row:hover {
+                                            background-color: #f8f9fa;
+                                        }
+
+                                        .boq-row label {
+                                            grid-column: auto;
+                                            margin-bottom: 0;
+                                            font-size: 0.9rem;
+                                            font-weight: 500;
+                                        }
+
+                                        .boq-row span:first-child {
+                                            background: none;
+                                            padding: 0;
+                                            color: #666;
+                                            font-weight: bold;
+                                        }
+
+                                        .boq-row input[id^="input_boq_make"] {
+                                            grid-column: auto;
+                                        }
+
+                                        .boq-row input[id^="input_boq_narration"] {
+                                            grid-column: auto;
+                                        }
+
+                                        .boq-row input {
+                                            padding: 6px 10px;
+                                            font-size: 0.85rem;
+                                        }
+                                    }
+                                </style>
+                                <div class="boq-inputs-container">
+                                    <div class="boq-header-row">
+                                        <span>#</span><span>Item</span><span>Make</span><span>Narration</span><span>Qty</span><span>Unit</span>
+                                    </div>
+
+                                    <!-- 01 PV PANEL -->
+                                    <div class="boq-row">
+                                        <span>01</span>
+                                        <label title="PV PANEL">PV PANEL</label>
+                                        <input type="text" id="input_boq_make_01" value="WAAREE / VIKRAM"
+                                            placeholder="Make">
+                                        <input type="text" id="input_boq_narration_01" value="MONO HALFCUT BIFACIAL"
+                                            placeholder="Narration">
+                                        <input type="text" id="input_boq_qty_01" value="100" placeholder="Qty">
+                                        <input type="text" id="input_boq_unit_01" value="KW" placeholder="Unit">
+                                    </div>
+
+                                    <!-- 02 PV INVERTER -->
+                                    <div class="boq-row">
+                                        <span>02</span>
+                                        <label title="PV INVERTER">PV INVERTER</label>
+                                        <input type="text" id="input_boq_make_02" value="VSOLE / EASTMAN">
+                                        <input type="text" id="input_boq_narration_02"
+                                            value="ONGRID 5G PRO100K WIFI RMS">
+                                        <input type="text" id="input_boq_qty_02" value="01">
+                                        <input type="text" id="input_boq_unit_02" value="NOS">
+                                    </div>
+
+                                    <!-- 03 STRUCTURE -->
+                                    <div class="boq-row">
+                                        <span>03</span>
+                                        <label title="MMS">MMS</label>
+                                        <input type="text" id="input_boq_make_03" value="SURYA/ APOLLO/ GPTL">
+                                        <input type="text" id="input_boq_narration_03"
+                                            value="GALVANISED IRON SQUARE PIPE">
+                                        <input type="text" id="input_boq_qty_03" value="FOR 100 KW">
+                                        <input type="text" id="input_boq_unit_03" value="--">
+                                    </div>
+
+                                    <!-- 04 ACDB -->
+                                    <div class="boq-row">
+                                        <span>04</span>
+                                        <label title="ACDB BOX">ACDB BOX</label>
+                                        <input type="text" id="input_boq_make_04" value="TECHREDO">
+                                        <input type="text" id="input_boq_narration_04"
+                                            value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
+                                        <input type="text" id="input_boq_qty_04" value="AS PER SLD">
+                                        <input type="text" id="input_boq_unit_04" value="--">
+                                    </div>
+
+                                    <!-- 05 DCDB -->
+                                    <div class="boq-row">
+                                        <span>05</span>
+                                        <label title="DCDB BOX">DCDB BOX</label>
+                                        <input type="text" id="input_boq_make_05" value="TECHREDO">
+                                        <input type="text" id="input_boq_narration_05"
+                                            value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
+                                        <input type="text" id="input_boq_qty_05" value="AS PER SLD">
+                                        <input type="text" id="input_boq_unit_05" value="--">
+                                    </div>
+
+                                    <!-- 06 CABLE TRAY -->
+                                    <div class="boq-row">
+                                        <span>06</span>
+                                        <label title="CABLE TRAY">CABLE TRAY</label>
+                                        <input type="text" id="input_boq_make_06" value="OBO/ ANY">
+                                        <input type="text" id="input_boq_narration_06" value="45X25 MM">
+                                        <input type="text" id="input_boq_qty_06" value="AS REQ">
+                                        <input type="text" id="input_boq_unit_06" value="--">
+                                    </div>
+
+                                    <!-- 07 CABLES -->
+                                    <div class="boq-row">
+                                        <span>07</span>
+                                        <label title="CABLES">CABLES</label>
+                                        <input type="text" id="input_boq_make_07" value="POLYCAB/ RR/ HAVELLES">
+                                        <input type="text" id="input_boq_narration_07" value="AS PER CAPACITY">
+                                        <input type="text" id="input_boq_qty_07" value="AS REQ">
+                                        <input type="text" id="input_boq_unit_07" value="--">
+                                    </div>
+
+                                    <!-- 08 EARTHING -->
+                                    <div class="boq-row">
+                                        <span>08</span>
+                                        <label title="EARTHING">EARTHING</label>
+                                        <input type="text" id="input_boq_make_08" value="TECHREDO">
+                                        <input type="text" id="input_boq_narration_08" value="TRADITIONAL 3 OHM">
+                                        <input type="text" id="input_boq_qty_08" value="03">
+                                        <input type="text" id="input_boq_unit_08" value="NOS">
+                                    </div>
+
+                                    <!-- 09 LA -->
+                                    <div class="boq-row">
+                                        <span>09</span>
+                                        <label title="LIGHTING ARRESTOR">LA</label>
+                                        <input type="text" id="input_boq_make_09" value="SGI/ STANDARD">
+                                        <input type="text" id="input_boq_narration_09" value="COPPER WITH EARTHING">
+                                        <input type="text" id="input_boq_qty_09" value="01">
+                                        <input type="text" id="input_boq_unit_09" value="NOS">
+                                    </div>
+
+                                    <!-- 10 NET METER -->
+                                    <div class="boq-row">
+                                        <span>10</span>
+                                        <label title="NET METER">NET METER</label>
+                                        <input type="text" id="input_boq_make_10" value="L&T/ GENUS/ HPL">
+                                        <input type="text" id="input_boq_narration_10" value="3 PH BIDIRECTIONAL">
+                                        <input type="text" id="input_boq_qty_10" value="01">
+                                        <input type="text" id="input_boq_unit_10" value="NOS">
+                                    </div>
+
+                                    <!-- 11 GEN METER -->
+                                    <div class="boq-row">
+                                        <span>11</span>
+                                        <label title="GEN. METER">GEN. METER</label>
+                                        <input type="text" id="input_boq_make_11" value="L&T/ GENUS/ HPL">
+                                        <input type="text" id="input_boq_narration_11" value="3 PH SOLAR">
+                                        <input type="text" id="input_boq_qty_11" value="01">
+                                        <input type="text" id="input_boq_unit_11" value="NOS">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scope-section">
+                                <label>SCOPE & COSTING</label>
+                                <div class="scope-item">
+                                    <input type="text" class="scope-input"
+                                        value="EPC CONTRACT OF ROOFTOP SOLAR PLANT 3 PH">
+                                </div>
+                                <div class="scope-item">
+                                    <input type="text" class="scope-input" value="REGULAR UNDER NON SUBSIDY - C&I">
+                                </div>
+                                <div class="scope-item">
+                                    <input type="text" class="scope-input" value="PV PANEL - VIKRAM / WAAREE - 5XX WP">
+                                </div>
+                                <div class="scope-item">
+                                    <input type="text" class="scope-input"
+                                        value="PV INVERTER - VSOLE / EASTMAN 3 PH 100 KW">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" style="flex: 1;">
+                                        <label for="mainQuoteQty">Summary Quantity (KW)</label>
+                                        <input type="number" id="mainQuoteQty" value="100" step="1">
+                                    </div>
+                                    <div class="form-group" style="flex: 1;">
+                                        <label for="mainQuoteRate">Summary Rate (per KW)</label>
+                                        <input type="number" id="mainQuoteRate" value="30000" step="100">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-text" id="addScopeRow">+ Add Row</button>
+                            </div>
+
+                            <button type="button" class="btn-primary" id="generatePdfBtn">Generate PDF</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Preview Section -->
+                <section class="preview-section">
+                    <div class="preview-container" id="previewContainer">
+                        <!-- Front Page (Cover) -->
+                        <div id="frontPage" class="quotation-page A4">
+                            <div class="front-page-content">
+                                <img src="background_clean.jpg" alt="Cover Page" class="cover-image">
+                                <div class="cover-overlay">
+                                    <h1 id="coverClientName">[Client Name]</h1>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NEW Quotation Page (Summary) -->
+                        <div id="quotationPage" class="quotation-page A4"
+                            style="padding: 10mm 15mm; position: relative; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                            <!-- Top Info Header (CIN/GSTIN) -->
+                            <div
+                                style="font-size: 7.5pt; color: #444; line-height: 1.2; margin-bottom: 2mm; text-align: right; border-bottom: 0.5px solid #eee; padding-bottom: 2mm;">
+                                <p style="margin: 0;"><b>CIN:</b> U74999MH2019PTC331050 | <b>GSTIN:</b> 27AAHCT5344C1ZF
+                                </p>
+                                <p style="margin: 0;">4160, GANGARAM PLOT, BHUSAWAL, DIST- JALGAON, MAHARASHTRA- 425201
+                                </p>
+                                <p style="margin: 0;">www.techredo.in | enquiry@techredo.in | +91 77 11 00 6999</p>
+                            </div>
+
+                            <!-- Centered Logo & Title Area -->
+                            <div style="text-align: center; margin-bottom: 5mm;">
+                                <img src="quotation_header.png" alt="TechRedo"
+                                    style="width: 140px; margin-bottom: 2mm;">
+                                <h1
+                                    style="font-size: 18pt; text-decoration: underline; margin: 0; font-family: 'Arial Black', sans-serif; letter-spacing: 2px;">
+                                    QUOTATION</h1>
+                            </div>
+
+                            <!-- Quotation Details Table -->
+                            <table
+                                style="width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 15px; border: 1.5px solid black;">
+                                <tr>
+                                    <td
+                                        style="width: 40%; border: 1px solid black; padding: 6px; vertical-align: top; line-height: 1.4;">
+                                        To,<br>
+                                        <b id="q_client_name"
+                                            style="font-size: 12pt; text-transform: uppercase;">[Client Name]</b><br>
+                                        <span id="q_location">[Location]</span><br>
+                                        Mob No: <span id="q_mobile" style="font-weight: bold;">[Mobile]</span>
+                                    </td>
+                                    <td style="width: 60%; padding: 0; vertical-align: top;">
+                                        <table style="width: 100%; border-collapse: collapse; border: none;">
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; width: 40%; text-align: right;">
+                                                    Quotation No.</td>
+                                                <td style="border: 1px solid black; padding: 5px; width: 60%;"><b
+                                                        id="q_no">QTN/25-26/DEC/933</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; text-align: right;">
+                                                    Date</td>
+                                                <td style="border: 1px solid black; padding: 5px;"><b
+                                                        id="q_date">24/12/2025</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; text-align: right;">
+                                                    Customer ID</td>
+                                                <td style="border: 1px solid black; padding: 5px;">--</td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; text-align: right;">
+                                                    Authorized Person</td>
+                                                <td style="border: 1px solid black; padding: 5px;"><b
+                                                        id="q_auth_person">[Auth Person]</b></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        style="border: 1px solid black; padding: 6px; vertical-align: top; line-height: 1.4;">
+                                        Delivered From,<br>
+                                        <b style="color: #dc2626; font-size: 11pt;">TechRedo</b> S<b>olar</b><br>
+                                        (A solar division of TIPL)
+                                    </td>
+                                    <td style="padding: 0; vertical-align: top;">
+                                        <table style="width: 100%; border-collapse: collapse; border: none;">
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; width: 40%; text-align: right;">
+                                                    TIPL Contact Person</td>
+                                                <td style="border: 1px solid black; padding: 5px; width: 60%;"><b
+                                                        id="q_tipl_contact">[TIPL Contact]</b></td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="border: 1px solid black; padding: 5px; background: #f2f2f2; text-align: right;">
+                                                    CONSUMER NO</td>
+                                                <td style="border: 1px solid black; padding: 5px;"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Items Table -->
+                            <table
+                                style="width: 100%; border-collapse: collapse; font-size: 10pt; border: 1.5px solid black; margin-bottom: 20px;">
+                                <thead style="background: #f1f1f1; text-align: center;">
+                                    <tr>
+                                        <th style="border: 1px solid black; padding: 8px; width: 50px;">SR. NO.</th>
+                                        <th style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
+                                        <th style="border: 1px solid black; padding: 8px; width: 60px;">QTY</th>
+                                        <th style="border: 1px solid black; padding: 8px; width: 60px;">UNIT</th>
+                                        <th style="border: 1px solid black; padding: 8px; width: 80px;">RATE (PER KW)
+                                        </th>
+                                        <th style="border: 1px solid black; padding: 8px; width: 100px;">AMOUNT (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td
+                                            style="border: 1px solid black; padding: 10px; text-align: center; vertical-align: top;">
+                                            1.</td>
+                                        <td style="border: 1px solid black; padding: 10px; vertical-align: top;">
+                                            <div id="q_scope_content" style="font-weight: bold; line-height: 1.6;">
+                                                <!-- Populated from Scope Inputs -->
+                                            </div>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black; padding: 10px; text-align: center; vertical-align: top;">
+                                            <b id="q_qty">100</b>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black; padding: 10px; text-align: center; vertical-align: top;">
+                                            <b id="q_unit">KW</b>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black; padding: 10px; text-align: center; vertical-align: top;">
+                                            <b id="q_unit_rate">30000.00</b>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black; padding: 10px; text-align: right; vertical-align: top;">
+                                            <b id="q_total">3000000.00</b>
+                                        </td>
+                                    </tr>
+                                    <tr style="background: #f9f9f9;">
+                                        <td colspan="5"
+                                            style="border: 1px solid black; padding: 8px; text-align: right;"><b
+                                                style="font-size: 12pt;">TOTAL AMOUNT</b></td>
+                                        <td style="border: 1px solid black; padding: 8px; text-align: right;"><b
+                                                id="q_total_bottom" style="font-size: 12pt;">30,00,000.00</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6"
+                                            style="border: 1px solid black; padding: 5px; text-align: right; background: #fff;">
+                                            <b id="q_total_words">THIRTY LAKH RS</b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Bank Details and Signatory -->
+                            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                                <div style="flex: 1;">
+                                    <table
+                                        style="width: 100%; border-collapse: collapse; font-size: 9pt; border: 1.5px solid black;">
+                                        <tr>
+                                            <td colspan="2"
+                                                style="background: #e7e6e6; border: 1px solid black; padding: 5px;">
+                                                <b>BANK DETAILS</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                style="width: 30%; border: 1px solid black; padding: 4px; text-align: right;">
+                                                ACCOUNT NAME :</td>
+                                            <td style="border: 1px solid black; padding: 4px; font-weight: bold;">
+                                                TECHREDO INDIA PRIVATE LIMITED</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: right;">
+                                                ACCOUNT NO. :</td>
+                                            <td style="border: 1px solid black; padding: 4px; font-weight: bold;">
+                                                1015014001823</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: right;">BANK
+                                                NAME :</td>
+                                            <td style="border: 1px solid black; padding: 4px; font-weight: bold;">THE
+                                                AKOLA URBAN CO-OP BANK LTD</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: right;">BRANCH
+                                                :</td>
+                                            <td style="border: 1px solid black; padding: 4px; font-weight: bold;">
+                                                JALGAON</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid black; padding: 4px; text-align: right;">IFSC
+                                                CODE :</td>
+                                            <td style="border: 1px solid black; padding: 4px; font-weight: bold;">
+                                                TAUB0001015</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div
+                                    style="width: 200px; text-align: center; border: 1.5px solid black; padding: 5px; height: 110px; display: flex; flex-direction: column; justify-content: space-between; background: #fff;">
+                                    <span style="font-size: 9pt; font-weight: bold;">Authorized Signatory</span>
+                                    <div style="margin-bottom: 2mm;">
+                                        <img src="quotation_header.png" alt="Seal"
+                                            style="width: 70px; opacity: 0.2; margin-bottom: -5px;"><br>
+                                        <b style="font-size: 10pt; color: #dc2626;">TechRedo</b> <span
+                                            style="font-weight: bold;">Solar</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div
+                                style="font-size: 8pt; line-height: 1.3; border: 1.5px solid black; padding: 8px; margin-top: 10px; background: #fff;">
+                                <div style="display: flex; gap: 10px;">
+                                    <b style="text-decoration: underline; color: blue; min-width: 35px;">Note:-</b>
+                                    <ol style="margin: 0; padding: 0 0 0 12px;">
+                                        <li>All clerical work of MSEB is included in following values.</li>
+                                        <li>Following clerical work is only obligated for rooftop solar plant only.</li>
+                                        <li>Payment stages will be as per below: 60% Advance, 30% before Panel
+                                            Installation, 10% After Installation.</li>
+                                        <li>Following quotation is only valid for the 20 days moves from date.</li>
+                                        <li>All rights are reserved for TechRedo itself.</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div
+                                style="position: absolute; bottom: 5mm; left: 0; width: 100%; text-align: center; font-size: 18pt; font-family: 'Berlin Sans FB', sans-serif;">
+                                <span style="color: #000;">YOU THINK </span><span style="color: #dc2626;">WE DO!</span>
+                            </div>
+                        </div>
+
+                        <!-- BOQ Page (Page 2/3) - GENERATED FROM XML -->
+                        <div id="boqPage" class="quotation-page A4" style="padding: 15mm;">
+
+                            <!-- Header -->
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                                <div style="width: 35%;">
+                                    <img src="boq_header.png" alt="TechRedo Solar"
+                                        style="width: 100%; max-width: 180px;">
+                                </div>
+                                <div
+                                    style="text-align: right; font-family: 'Berlin Sans FB', sans-serif; color: #666; font-size: 11pt; font-weight: bold; line-height: 1.2;">
+                                    <p style="margin: 0;">enquiry@techredo.in</p>
+                                    <p style="margin: 0;">+91 77 11 00 6999</p>
+                                    <p style="margin: 0;">www.techredo.in</p>
+                                </div>
+                            </div>
+
+                            <!-- Separator Line -->
+                            <hr style="border: 0; border-top: 1px solid #999; margin-bottom: 20px; margin-top: 5px;">
+
+                            <!-- Title -->
+                            <div style="text-align: center; margin-bottom: 5px;">
+                                <h3
+                                    style="font-family: 'Times New Roman', serif; font-weight: bold; font-size: 12pt; text-transform: uppercase; margin: 0; padding: 5px;">
+                                    BILL OF MATERIAL</h3>
+                            </div>
+
+                            <!-- Table -->
+                            <table class="scope-table"
+                                style="width: 100%; border-collapse: collapse; font-size: 9pt; font-family: 'Times New Roman', serif; border: 1px solid black;">
+                                <thead>
+                                    <tr style="background-color: #EEECE1;">
+                                        <th
+                                            style="border: 1px solid black; padding: 4px; width: 40px; text-align: center;">
+                                            SR NO.</th>
+                                        <th style="border: 1px solid black; padding: 4px; text-align: left;">ITEM</th>
+                                        <th style="border: 1px solid black; padding: 4px; text-align: left;">MAKE</th>
+                                        <th style="border: 1px solid black; padding: 4px; text-align: left;">NARRATION
+                                        </th>
+                                        <th
+                                            style="border: 1px solid black; padding: 4px; width: 60px; text-align: center;">
+                                            QTY</th>
+                                        <th
+                                            style="border: 1px solid black; padding: 4px; width: 50px; text-align: center;">
+                                            UNIT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">01</td>
+                                        <td id="boq_item_01" style="border: 1px solid black; padding: 4px;">PV PANEL5XX
+                                            WP</td>
+                                        <td id="boq_make_01" style="border: 1px solid black; padding: 4px;">WAAREE /
+                                            VIKRAM</td>
+                                        <td id="boq_narration_01" style="border: 1px solid black; padding: 4px;">MONO
+                                            HALFCUT BIFACIAL</td>
+                                        <td id="boq_qty_01" style="border: 1px solid black; padding: 4px;">100</td>
+                                        <td id="boq_unit_01" style="border: 1px solid black; padding: 4px;">KW</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">02</td>
+                                        <td id="boq_item_02" style="border: 1px solid black; padding: 4px;">PV INVERTER3
+                                            PH 100 KW</td>
+                                        <td id="boq_make_02" style="border: 1px solid black; padding: 4px;">VSOLE /
+                                            EASTMAN</td>
+                                        <td id="boq_narration_02" style="border: 1px solid black; padding: 4px;">ONGRID
+                                            5G PRO100K WIFI RMS</td>
+                                        <td id="boq_qty_02" style="border: 1px solid black; padding: 4px;">01</td>
+                                        <td id="boq_unit_02" style="border: 1px solid black; padding: 4px;">NOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">03</td>
+                                        <td id="boq_item_03" style="border: 1px solid black; padding: 4px;">MODULE
+                                            MOUNTING STRUCTURE</td>
+                                        <td id="boq_make_03" style="border: 1px solid black; padding: 4px;">SURYA/
+                                            APOLLO/ GPTL</td>
+                                        <td id="boq_narration_03" style="border: 1px solid black; padding: 4px;">
+                                            GALVANISED IRON SQUARE PIPE/ MOUNTING </td>
+                                        <td id="boq_qty_03" style="border: 1px solid black; padding: 4px;">FOR 100 KW
+                                        </td>
+                                        <td id="boq_unit_03" style="border: 1px solid black; padding: 4px;">--</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">04</td>
+                                        <td id="boq_item_04" style="border: 1px solid black; padding: 4px;">ACDB BOX
+                                        </td>
+                                        <td id="boq_make_04" style="border: 1px solid black; padding: 4px;">TECHREDO
+                                        </td>
+                                        <td id="boq_narration_04" style="border: 1px solid black; padding: 4px;">
+                                            SWITCHGEAR- ABB/ L&T/ SCHNIEDERSPD- ELMEX/ FINDER</td>
+                                        <td id="boq_qty_04" style="border: 1px solid black; padding: 4px;">AS PER SLD
+                                        </td>
+                                        <td id="boq_unit_04" style="border: 1px solid black; padding: 4px;">--</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">05</td>
+                                        <td id="boq_item_05" style="border: 1px solid black; padding: 4px;">DCDB BOX
+                                        </td>
+                                        <td id="boq_make_05" style="border: 1px solid black; padding: 4px;">TECHREDO
+                                        </td>
+                                        <td id="boq_narration_05" style="border: 1px solid black; padding: 4px;">
+                                            SWITCHGEAR- ABB/ L&T/ SCHNIEDERSPD- ELMEX/ FINDER</td>
+                                        <td id="boq_qty_05" style="border: 1px solid black; padding: 4px;">AS PER SLD
+                                        </td>
+                                        <td id="boq_unit_05" style="border: 1px solid black; padding: 4px;">--</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">06</td>
+                                        <td id="boq_item_06" style="border: 1px solid black; padding: 4px;">CABLE TRAY
+                                        </td>
+                                        <td id="boq_make_06" style="border: 1px solid black; padding: 4px;">OBO/ ANY
+                                        </td>
+                                        <td id="boq_narration_06" style="border: 1px solid black; padding: 4px;">45X25
+                                            MM</td>
+                                        <td id="boq_qty_06" style="border: 1px solid black; padding: 4px;">AS REQ</td>
+                                        <td id="boq_unit_06" style="border: 1px solid black; padding: 4px;">--</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">07</td>
+                                        <td id="boq_item_07" style="border: 1px solid black; padding: 4px;">CABELS AND
+                                            ACCESSORIES</td>
+                                        <td id="boq_make_07" style="border: 1px solid black; padding: 4px;">POLYCAB/ RR/
+                                            HAVELLES</td>
+                                        <td id="boq_narration_07" style="border: 1px solid black; padding: 4px;">WILL BE
+                                            DECIDED AS PER CURRENT CAPACITY</td>
+                                        <td id="boq_qty_07" style="border: 1px solid black; padding: 4px;">AS REQ</td>
+                                        <td id="boq_unit_07" style="border: 1px solid black; padding: 4px;">--</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">08</td>
+                                        <td id="boq_item_08" style="border: 1px solid black; padding: 4px;">ELECTRICAL
+                                            EARTHING</td>
+                                        <td id="boq_make_08" style="border: 1px solid black; padding: 4px;">TECHREDO
+                                        </td>
+                                        <td id="boq_narration_08" style="border: 1px solid black; padding: 4px;">
+                                            TRADITIONAL EARTHING WITH 3 OHM RESISTANCE</td>
+                                        <td id="boq_qty_08" style="border: 1px solid black; padding: 4px;">03</td>
+                                        <td id="boq_unit_08" style="border: 1px solid black; padding: 4px;">NOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">09</td>
+                                        <td id="boq_item_09" style="border: 1px solid black; padding: 4px;">LIGHTING
+                                            ARRESTOR</td>
+                                        <td id="boq_make_09" style="border: 1px solid black; padding: 4px;">SGI/
+                                            STANDARD</td>
+                                        <td id="boq_narration_09" style="border: 1px solid black; padding: 4px;">COPPER
+                                            ARRESTOR WITH SPECIAL EARTING</td>
+                                        <td id="boq_qty_09" style="border: 1px solid black; padding: 4px;">01</td>
+                                        <td id="boq_unit_09" style="border: 1px solid black; padding: 4px;">NOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">10</td>
+                                        <td id="boq_item_10" style="border: 1px solid black; padding: 4px;">NET METER
+                                        </td>
+                                        <td id="boq_make_10" style="border: 1px solid black; padding: 4px;">L&T/ GENUS/
+                                            HPL</td>
+                                        <td id="boq_narration_10" style="border: 1px solid black; padding: 4px;">3 PH
+                                            BIDIRECTIONAL METER</td>
+                                        <td id="boq_qty_10" style="border: 1px solid black; padding: 4px;">01</td>
+                                        <td id="boq_unit_10" style="border: 1px solid black; padding: 4px;">NOS</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">11</td>
+                                        <td id="boq_item_11" style="border: 1px solid black; padding: 4px;">GENERATION
+                                            METER</td>
+                                        <td id="boq_make_11" style="border: 1px solid black; padding: 4px;">L&T/ GENUS/
+                                            HPL</td>
+                                        <td id="boq_narration_11" style="border: 1px solid black; padding: 4px;">3 PH
+                                            FOR MEASURING SOLAR GENERATION</td>
+                                        <td id="boq_qty_11" style="border: 1px solid black; padding: 4px;">01</td>
+                                        <td id="boq_unit_11" style="border: 1px solid black; padding: 4px;">NOS</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+                            <!-- Note -->
+                            <p
+                                style="font-size: 8pt; font-weight: bold; margin-top: 15px; font-family: 'Times New Roman', serif;">
+                                *** THIS IS TENTATIVE BOM OF PROJECT, QUANTITY MAY VARY AS PER SITE CONDITIONS AND
+                                REQUIREMENTS.</p>
+
+                            <!-- Footer Signature (Empty box placeholder if needed, or just space) -->
+                            <div style="text-align: right; margin-top: 20px;">
+                                <div style="display:inline-block; width: 30px; height: 30px; border: 1px solid #ccc;">
+                                </div>
+                            </div>
+
+                            <!-- Bottom Footer -->
+                            <div
+                                style="position: absolute; bottom: 5mm; width: calc(100% - 30mm); text-align: center; font-family: 'Berlin Sans FB', sans-serif; color: #777; font-size: 10pt;">
+                                <p style="margin: 0;">A solar division of <span
+                                        style="font-family: 'Cooper Black', serif; color: #ff3333;">TechRedo</span>
+                                    India Private Limited</p>
+                            </div>
+                        </div>
+
+                        <!-- Permanent PDF Preview -->
+                        <div class="pdf-preview-wrapper"
+                            style="margin-top: 40px; width: 100%; border-top: 2px dashed #ccc; padding-top: 20px;">
+                            <h3 style="text-align: center; color: #666; margin-bottom: 20px;">Attached Document:
+                                Permanent.pdf</h3>
+                            <iframe src="Permanent.pdf#toolbar=0&view=FitH" width="100%" height="800px"
+                                style="border: 1px solid #ddd; background: white; width: 210mm; margin: 0 auto; display: block;"></iframe>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

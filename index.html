@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TechRedo</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Desktop: Vertical, Mobile: Horizontal) -->
+        <aside class="sidebar">
+            <!-- Brand -->
+            <div class="brand">
+                <h1><span class="tech-red">Tech</span><span class="redo-white">Redo</span></h1>
+                <p class="subtitle">Quotation System</p>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="btn-new" onclick="window.location.href='generator.html'">
+                <i class="fas fa-plus"></i>
+                <span class="btn-text-full">New Quotation</span>
+                <span class="btn-text-short">New</span>
+            </button>
+
+            <!-- Navigation -->
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-list"></i>
+                    <span>Saved Quotations</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="sidebar-footer">
+                <p>© 2026 TechRedo India Pvt Ltd</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="content-header">
+                <h2>Saved Quotations</h2>
+                <span class="version">v1.2</span>
+            </header>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid" id="cardsGrid">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="far fa-file-alt"></i>
+                <p>No quotations found. Create a new one!</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading quotations...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
