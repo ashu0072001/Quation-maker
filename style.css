@@ -432,7 +432,6 @@ select:focus {
     /* Ensure it fills the A4 area exactly */
     display: block;
 }
-}
 
 .cover-overlay {
     position: absolute;
