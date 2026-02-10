@@ -639,26 +639,8 @@ select:focus {
         display: none;
     }
 
-    /* Icon only on mobile */
     .sidebar-footer {
         display: none;
-    }
-
-    /* Shrink New Quotation Button on Mobile */
-    .btn-new {
-        width: auto !important;
-        margin-bottom: 0 !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.85rem !important;
-        gap: 0.25rem !important;
-    }
-
-    .btn-text-full {
-        display: none !important;
-    }
-
-    .btn-text-short {
-        display: inline !important;
     }
 
     /* Main Content */
