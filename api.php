@@ -10,18 +10,24 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // --- DATABASE CONFIGURATION ---
-// Replace with your cPanel MySQL credentials
-$db_host = 'localhost';
-$db_user = 'root';      // Update this
-$db_pass = '';          // Update this
-$db_name = 'integf_techredo_quotations'; // Updated from SQL dump
+// IMPORTANT: Update these for your live server (Check cPanel > MySQL Databases)
+$db_host = 'localhost';             // Often 'localhost' but some hosts vary
+$db_user = 'root';                  // Your cPanel Database Username
+$db_pass = '';                      // Your cPanel Database Password
+$db_name = 'integf_techredo_quotations'; // The actual Database Name in cPanel
 
 // Create connection
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+mysqli_report(MYSQLI_REPORT_OFF); // Prevent internal warnings from breaking JSON
+$conn = @new mysqli($db_host, $db_user, $db_pass, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => "Connection failed: " . $conn->connect_error]));
+    echo json_encode([
+        'success' => false, 
+        'message' => "Database Connection Failed: (" . $conn->connect_errno . ") " . $conn->connect_error,
+        'advice' => "Please check your live server credentials in api.php"
+    ]);
+    exit;
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
