@@ -203,40 +203,69 @@ document.addEventListener('DOMContentLoaded', () => {
             filename: 'Quotation.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
-                scale: 3,
+                scale: 2, // 2 is safer for mobile memory than 3
                 useCORS: true,
                 letterRendering: true,
-                logging: false
+                logging: false,
+                scrollX: 0,
+                scrollY: 0
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Helper to capture each page from a full-sized clone to avoid mobile scaling/clipping issues
+        // Highly robust capture: Clones to body, waits for images, and uses a paint delay
         const capturePage = async (elementId) => {
             const element = document.getElementById(elementId);
             if (!element) return null;
 
-            // Clone and prepare for recording (unscaled, full size)
+            // Temporary container to ensure element is rendered at full size
             const clone = element.cloneNode(true);
-            clone.style.position = 'fixed';
-            clone.style.left = '-9999px';
-            clone.style.top = '0';
-            clone.style.width = '210mm';
-            clone.style.height = '297mm';
-            clone.style.transform = 'none';
-            clone.style.margin = '0';
-            clone.style.visibility = 'visible';
-            clone.style.display = 'block';
-            clone.style.zIndex = '-9999';
+            Object.assign(clone.style, {
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                width: '210mm',
+                height: '297mm',
+                transform: 'none',
+                visibility: 'visible',
+                display: 'block',
+                zIndex: '9999',
+                background: 'white',
+                margin: '0',
+                padding: '10mm 15mm'
+            });
+
+            // Special handling for pages with different padding
+            if (elementId === 'frontPage') {
+                clone.style.padding = '0';
+            } else if (elementId === 'boqPage') {
+                clone.style.padding = '15mm';
+            }
 
             document.body.appendChild(clone);
-            const buffer = await html2pdf().set(opt).from(clone).output('arraybuffer');
+
+            // Ensure all images are loaded before capture
+            const imgs = Array.from(clone.querySelectorAll('img'));
+            await Promise.all(imgs.map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(res => { img.onload = res; img.onerror = res; });
+            }));
+
+            // Allow browser to paint the clone
+            await new Promise(r => setTimeout(r, 600));
+
+            // Use the full Promise-based html2pdf API for better consistency
+            const buffer = await html2pdf().set(opt).from(clone).toPdf().get('pdf').output('arraybuffer');
+
             document.body.removeChild(clone);
             return buffer;
         };
 
         try {
-            // 1. Generate PDFs from HTML elements using the robust capture method
+            // Scroll to top to prevention capture offsets
+            window.scrollTo(0, 0);
+
+            // 1. Generate PDFs from HTML elements sequentially
             const frontPagePdf = await capturePage('frontPage');
             const quotationPagePdf = await capturePage('quotationPage');
             const boqPagePdf = await capturePage('boqPage');
@@ -279,9 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
             link.download = `Quotation_${clientNameInput.value || 'Client'}.pdf`;
             link.click();
             URL.revokeObjectURL(url);
-
-            // 5. Open in new tab (REMOVED: as per user request to stop annoying auto-opening)
-            // window.open(url, '_blank');
 
             // 6. Save Quotation to localStorage
             saveQuotation();
