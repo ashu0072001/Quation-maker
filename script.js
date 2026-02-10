@@ -228,15 +228,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const opt = {
             margin: 0,
             filename: 'Quotation.pdf',
-            image: { type: 'jpeg', quality: 0.95 },
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: {
-                scale: 1.5,
+                scale: 2, // Higher scale for better clarity on live sites
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 800
+                windowWidth: 794 // Standard A4 pixel width at 96 DPI
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
         };
@@ -317,11 +317,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
 
-            // Trigger local download
+            // Trigger local download with proper naming: [QuoteNo]_[ClientName].pdf
+            const quoteNoClean = (qNo.textContent || 'New').replace(/[\/\\]/g, '_').replace(/\s+/g, '_');
+            const clientNameClean = (clientNameInput.value || 'Client').replace(/[\/\\]/g, '_').replace(/\s+/g, '_');
+            const fileName = `${quoteNoClean}_${clientNameClean}.pdf`;
+
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Quotation_${quoteIdInput.value || 'New'}.pdf`;
+            link.download = fileName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
