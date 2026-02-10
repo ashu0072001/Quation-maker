@@ -250,8 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             URL.revokeObjectURL(url);
 
-            // 5. Save Quotation to localStorage
+            // 5. Open in new tab
+            window.open(url, '_blank');
+
+            // 6. Save Quotation to localStorage
             saveQuotation();
+
+            // 7. Auto-reload to refresh form
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
 
         } catch (error) {
             console.error("Error generating PDF:", error);
