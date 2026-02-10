@@ -151,6 +151,11 @@
                                         gap: 8px;
                                     }
 
+                                    .boq-header-row {
+                                        display: none;
+                                        /* Hide on mobile */
+                                    }
+
                                     .boq-row {
                                         display: block;
                                         padding: 15px 0;
@@ -159,16 +164,20 @@
 
                                     .boq-row .row-header {
                                         display: flex;
-                                        justify-content: space-between;
-                                        margin-bottom: 10px;
-                                        background: #f8f9fa;
-                                        padding: 5px 10px;
-                                        border-radius: 4px;
+                                        align-items: center;
+                                        gap: 12px;
+                                        margin-bottom: 12px;
+                                        background: #fdf2f2;
+                                        padding: 8px 12px;
+                                        border-radius: 6px;
+                                        border-left: 4px solid #dc2626;
                                     }
 
-                                    .boq-row span:first-child {
+                                    .boq-row .row-header span {
                                         font-weight: bold;
                                         color: #dc2626;
+                                        font-size: 0.9rem;
+                                        white-space: nowrap;
                                     }
 
                                     .boq-row label {
@@ -238,15 +247,17 @@
                                             display: contents;
                                         }
 
-                                        /* Hide Sn prefix and mobile-only labels on Desktop */
                                         .boq-row .row-header span {
                                             font-size: 0.85rem;
                                             color: #666;
                                             font-weight: bold;
+                                            border: none;
+                                            background: none;
+                                            padding: 0;
                                         }
 
-                                        /* Hide mobile labels in desktop view */
-                                        .boq-input-group label {
+                                        /* Force hide ALL mobile labels in desktop view */
+                                        .boq-row .boq-input-group label {
                                             display: none !important;
                                         }
 
