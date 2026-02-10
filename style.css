@@ -441,7 +441,7 @@ select:focus {
     position: absolute;
     /* Fixed distance from right edge, vertically centered */
     top: 50%;
-    right: 5%;
+    right: 7%;
     /* 
        Translate X 50% moves the center of element to the right anchor point.
        Translate Y -50% centers element on top: 50% line.

@@ -143,17 +143,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (input.value.trim() !== "") {
                     const p = document.createElement('div');
                     p.style.marginBottom = "5px";
-                    p.innerHTML = `<span style="display:inline-block; width: 100px;">${input.value.split('-')[0]}</span> - ${input.value.split('-')[1] || ''}`;
-                    // Special logic for EPC line bolding as per image
-                    if (index === 0 || index === 1) {
-                        p.style.fontWeight = "bold";
-                        p.innerHTML = input.value;
-                    } else {
-                        // For PV Panel etc, handle the dash
-                        if (input.value.includes('-')) {
-                            const parts = input.value.split('-');
-                            p.innerHTML = `<b>${parts[0]}</b> - ${parts[1]}`;
+
+                    // Fixed logic for multiple dashes: preserve all content after first dash
+                    const firstDashIndex = input.value.indexOf('-');
+                    if (firstDashIndex !== -1) {
+                        const prefix = input.value.substring(0, firstDashIndex).trim();
+                        const suffix = input.value.substring(firstDashIndex + 1).trim();
+
+                        if (index === 0 || index === 1) {
+                            p.style.fontWeight = "bold";
+                            p.innerHTML = input.value;
+                        } else {
+                            p.innerHTML = `<b>${prefix}</b> - ${suffix}`;
                         }
+                    } else {
+                        // No dash present
+                        if (index === 0 || index === 1) {
+                            p.style.fontWeight = "bold";
+                        }
+                        p.textContent = input.value;
                     }
                     qScopeContent.appendChild(p);
                 }
@@ -205,11 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Cache for external PDFs
+    const pdfCache = {};
+
     generatePdfBtn.addEventListener('click', async () => {
         const loader = document.getElementById('pdfLoader');
+        const loaderText = loader ? loader.querySelector('p') : null;
         if (loader) loader.style.display = 'flex';
 
-        // 1. Enter Atomic Capture Mode: Direct unscaled visible capture
+        // 1. Enter Atomic Capture Mode
         document.body.classList.add('printing-mode');
         window.scrollTo(0, 0);
 
@@ -218,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             filename: 'Quotation.pdf',
             image: { type: 'jpeg', quality: 0.95 },
             html2canvas: {
-                scale: 1.5, // Safer for mobile RAM
+                scale: 1.5,
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
@@ -241,8 +253,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return new Promise(res => { img.onload = res; img.onerror = res; });
                 }));
 
-                // Critical delay for mobile repaints and hardware acceleration
-                await new Promise(r => setTimeout(r, 1500));
+                // Optimized delay from 1500ms to 500ms
+                await new Promise(r => setTimeout(r, 500));
 
                 const buffer = await html2pdf().set(opt).from(element).toPdf().get('pdf').output('arraybuffer');
                 return buffer;
@@ -252,25 +264,34 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
+        const fetchPdf = async (url) => {
+            if (pdfCache[url]) return pdfCache[url];
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const buffer = await resp.arrayBuffer();
+                pdfCache[url] = buffer;
+                return buffer;
+            } catch (e) { return null; }
+        };
+
         try {
-            // 2. Capture pages sequentially
-            const frontPagePdf = await capturePageInPlace('frontPage');
-            const boqPagePdf = await capturePageInPlace('boqPage');
-            const quotationPagePdf = await capturePageInPlace('quotationPage');
+            if (loaderText) loaderText.textContent = "Processing PDF components...";
 
-            // 3. Fetch external PDFs
-            const fetchPdf = async (url) => {
-                try {
-                    const resp = await fetch(url);
-                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                    return await resp.arrayBuffer();
-                } catch (e) { return null; }
-            };
+            // 2. Start all tasks in parallel
+            const tasks = [
+                capturePageInPlace('frontPage'),
+                capturePageInPlace('boqPage'),
+                capturePageInPlace('quotationPage'),
+                fetchPdf('Permanent.pdf'),
+                fetchPdf('last.pdf')
+            ];
 
-            const permBuffer = await fetchPdf('Permanent.pdf');
-            const lastBuffer = await fetchPdf('last.pdf');
+            const [frontPagePdf, boqPagePdf, quotationPagePdf, permBuffer, lastBuffer] = await Promise.all(tasks);
 
-            // 4. Merge PDFs
+            if (loaderText) loaderText.textContent = "Merging documents...";
+
+            // 3. Merge PDFs
             const { PDFDocument } = PDFLib;
             const mergedPdf = await PDFDocument.create();
 
@@ -292,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { }
             }
 
-            // 5. Download
+            // 4. Download
             const mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
