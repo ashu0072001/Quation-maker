@@ -408,26 +408,30 @@ select:focus {
 
 /* Front Page Specifics */
 #frontPage {
-    padding: 0;
+    padding: 0 !important;
     /* Full bleed image */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    height: 296.8mm;
-    /* Prevent spillover causing blank page */
+    height: 297mm;
+    /* Perfect A4 height */
+    width: 210mm;
 }
 
 .front-page-content {
-    width: 100%;
-    height: 100%;
+    width: 210mm;
+    height: 297mm;
+    position: relative;
 }
 
 .cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Or cover depending on image ratio vs A4 */
+    width: 210mm;
+    height: 297mm;
+    object-fit: fill;
+    /* Ensure it fills the A4 area exactly */
+    display: block;
+}
 }
 
 .cover-overlay {
