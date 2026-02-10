@@ -13,6 +13,28 @@
 </head>
 
 <body>
+    <!-- PDF Generation Loader -->
+    <div id="pdfLoader"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; flex-direction:column; align-items:center; justify-content:center; color:white; font-family:sans-serif; text-align:center; padding:20px;">
+        <div
+            style="width:60px; height:60px; border:6px solid #f3f3f3; border-top:6px solid #dc2626; border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px;">
+        </div>
+        <h2 style="margin-bottom:10px;">Generating Your PDF...</h2>
+        <p style="font-size:1rem; opacity:0.9;">Please wait, this may take up to 20 seconds on mobile devices.</p>
+        <p style="font-size:0.8rem; margin-top:20px; color:#94a3b8;">Do not close or refresh this page.</p>
+    </div>
+    <style>
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
