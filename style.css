@@ -819,75 +819,54 @@ select:focus {
         /* Scale down significantly for mobile */
         transform-origin: top center;
         margin: 0 auto;
-        width: 210mm;
-        /* Force A4 width to keep internal layout consistent */
-        height: auto;
-        padding-bottom: 100px;
-        /* Extra space for scaled content */
-    }
-}
-
-/* ==========================================
-   MOBILE RESPONSIVE - SIDEBAR
-   ========================================== */
-
-@media (max-width: 768px) {
-
-    /* Horizontal Sidebar */
-    .app-container {
-        flex-direction: column;
     }
 
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .brand {
-        margin-bottom: 0;
-    }
-
-    .brand h1 {
-        font-size: 1.25rem;
-    }
-
-    .subtitle {
-        display: none;
-    }
-
-    .btn-new {
-        width: auto;
-        padding: 0.625rem 1rem;
-        margin-bottom: 0;
-        font-size: 0.875rem;
-    }
-
-    .btn-text-full {
-        display: none;
-    }
-
-    .btn-text-short {
-        display: inline;
-    }
-
-    .nav-menu {
-        display: none;
-    }
-
-    .sidebar-footer {
-        display: none;
-    }
-
-    /* Main Content */
-    .main-content {
-        padding: 1rem;
+    .quotation-page {
+        padding: 10px !important;
+        /* Smaller padding on mobile preview */
     }
 
     .content-header h2 {
         font-size: 1.5rem;
     }
+}
+
+/* ==========================================
+   PRINTING / CAPTURE MODE - ATOMIC FIX 
+   ========================================== */
+body.printing-mode {
+    overflow: visible !important;
+    height: auto !important;
+    background: white !important;
+}
+
+body.printing-mode .app-container {
+    display: none !important;
+}
+
+body.printing-mode .preview-section {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 210mm !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+    display: block !important;
+}
+
+body.printing-mode .preview-container {
+    transform: none !important;
+    width: 210mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+
+body.printing-mode .quotation-page {
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
 }

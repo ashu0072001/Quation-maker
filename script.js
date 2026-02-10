@@ -94,8 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (qTiplContact) qTiplContact.textContent = tiplContactInput.value || '[TIPL Contact]';
 
         // Qty Sync for main summary (taking first item from BOQ usually implies total project kw)
-        const projectQty = document.getElementById('input_boq_qty_01').value || '100';
-        const projectUnit = document.getElementById('input_boq_unit_01').value || 'KW';
+        const firstQtyInput = document.getElementById('input_boq_qty_01');
+        const firstUnitInput = document.getElementById('input_boq_unit_01');
+        const projectQty = firstQtyInput ? firstQtyInput.value : '100';
+        const projectUnit = firstUnitInput ? firstUnitInput.value : 'KW';
+
         if (qQty) qQty.textContent = mainQuoteQtyInput.value || '100';
         if (qUnit) qUnit.textContent = projectUnit;
 
@@ -183,30 +186,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Special listener for scope inputs (delegation)
-    scopeContainer.addEventListener('input', (e) => {
-        if (e.target.classList.contains('scope-input')) {
-            updatePreview();
-        }
-    });
+    if (scopeContainer) {
+        scopeContainer.addEventListener('input', (e) => {
+            if (e.target.classList.contains('scope-input')) {
+                updatePreview();
+            }
+        });
+    }
 
-    addScopeBtn.addEventListener('click', () => {
-        const div = document.createElement('div');
-        div.className = 'scope-item';
-        div.innerHTML = `<input type="text" class="scope-input" placeholder="Enter description">`;
-        scopeContainer.insertBefore(div, document.getElementById('mainQuoteRate').closest('.form-row'));
-        updatePreview();
-    });
+    if (addScopeBtn) {
+        addScopeBtn.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.className = 'scope-item';
+            div.innerHTML = `<input type="text" class="scope-input" placeholder="Enter description">`;
+            const mainRateRow = document.getElementById('mainQuoteRate').closest('.form-row');
+            scopeContainer.insertBefore(div, mainRateRow);
+            updatePreview();
+        });
+    }
 
     generatePdfBtn.addEventListener('click', async () => {
         const loader = document.getElementById('pdfLoader');
         if (loader) loader.style.display = 'flex';
+
+        // 1. Enter Atomic Capture Mode: Direct unscaled visible capture
+        document.body.classList.add('printing-mode');
+        window.scrollTo(0, 0);
 
         const opt = {
             margin: 0,
             filename: 'Quotation.pdf',
             image: { type: 'jpeg', quality: 0.95 },
             html2canvas: {
-                scale: 1.5, // Safer for mobile memory
+                scale: 1.5, // Safer for mobile RAM
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
@@ -217,83 +229,48 @@ document.addEventListener('DOMContentLoaded', () => {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
         };
 
-        // Ultimate robust capture for mobile
-        const capturePage = async (elementId) => {
+        const capturePageInPlace = async (elementId) => {
             const element = document.getElementById(elementId);
             if (!element) return null;
 
-            // 1. Temporarily override body styles to allow full capture
-            const originalOverflow = document.body.style.overflow;
-            const originalHeight = document.body.style.height;
-            document.body.style.overflow = 'visible';
-            document.body.style.height = 'auto';
-
-            // 2. Clone the element
-            const clone = element.cloneNode(true);
-            Object.assign(clone.style, {
-                position: 'absolute',
-                top: '0',
-                left: '0',
-                width: '210mm',
-                height: '297mm',
-                transform: 'none',
-                visibility: 'visible',
-                display: 'block',
-                zIndex: '15000',
-                background: 'white',
-                margin: '0',
-                opacity: '1'
-            });
-
-            if (elementId === 'frontPage') clone.style.padding = '0';
-            else if (elementId === 'boqPage') clone.style.padding = '15mm';
-            else clone.style.padding = '10mm 15mm';
-
-            document.body.appendChild(clone);
-
             try {
                 await document.fonts.ready;
-                const imgs = Array.from(clone.querySelectorAll('img'));
+                const imgs = Array.from(element.querySelectorAll('img'));
                 await Promise.all(imgs.map(img => {
                     if (img.complete) return Promise.resolve();
                     return new Promise(res => { img.onload = res; img.onerror = res; });
                 }));
 
-                await new Promise(r => setTimeout(r, 1000));
+                // Critical delay for mobile repaints and hardware acceleration
+                await new Promise(r => setTimeout(r, 1500));
 
-                const buffer = await html2pdf().set(opt).from(clone).toPdf().get('pdf').output('arraybuffer');
+                const buffer = await html2pdf().set(opt).from(element).toPdf().get('pdf').output('arraybuffer');
                 return buffer;
-            } finally {
-                document.body.removeChild(clone);
-                document.body.style.overflow = originalOverflow;
-                document.body.style.height = originalHeight;
+            } catch (e) {
+                console.error(`Error capturing ${elementId}:`, e);
+                return null;
             }
         };
 
         try {
-            window.scrollTo(0, 0);
+            // 2. Capture pages sequentially
+            const frontPagePdf = await capturePageInPlace('frontPage');
+            const boqPagePdf = await capturePageInPlace('boqPage');
+            const quotationPagePdf = await capturePageInPlace('quotationPage');
 
-            // 1. Capture HTML pages sequentially
-            const frontPagePdf = await capturePage('frontPage');
-            const boqPagePdf = await capturePage('boqPage');
-            const quotationPagePdf = await capturePage('quotationPage');
-
-            // 2. Fetch external PDFs
+            // 3. Fetch external PDFs
             const fetchPdf = async (url) => {
                 try {
                     const resp = await fetch(url);
                     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                     return await resp.arrayBuffer();
-                } catch (e) {
-                    console.warn(`Could not fetch ${url}, skipping:`, e);
-                    return null;
-                }
+                } catch (e) { return null; }
             };
 
             const permBuffer = await fetchPdf('Permanent.pdf');
             const lastBuffer = await fetchPdf('last.pdf');
 
-            // 3. Merge PDFs
+            // 4. Merge PDFs
             const { PDFDocument } = PDFLib;
             const mergedPdf = await PDFDocument.create();
 
@@ -312,12 +289,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const indices = item.all ? pdf.getPageIndices() : item.pages;
                     const copiedPages = await mergedPdf.copyPages(pdf, indices);
                     copiedPages.forEach(p => mergedPdf.addPage(p));
-                } catch (e) {
-                    console.error("Error loading PDF partial:", e);
-                }
+                } catch (e) { }
             }
 
-            // 4. Finalize and Download
+            // 5. Download
             const mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -329,15 +304,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             saveQuotation();
 
-            if (loader) loader.innerHTML = "<h2>Download Started!</h2><p>Page will refresh in a few seconds...</p>";
+            if (loader) loader.innerHTML = "<h2>Download Started!</h2><p>Page will refresh in 2s...</p>";
 
             setTimeout(() => {
                 window.location.reload();
-            }, 3000);
+            }, 2500);
 
         } catch (error) {
             console.error("Critical error generating PDF:", error);
-            alert("Failed to generate PDF. check console.");
+            alert("Failed to generate PDF. Check console.");
+            document.body.classList.remove('printing-mode');
             if (loader) loader.style.display = 'none';
         }
     });
@@ -348,15 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function updateBoq(idSuffix, type, value) {
-        // type: make, narration, qty, unit
         const cellId = `boq_${type}_${idSuffix}`;
         const cell = document.getElementById(cellId);
-        if (cell) {
-            cell.textContent = value;
-        }
+        if (cell) cell.textContent = value;
     }
 
-    // Attach listeners to BOQ inputs
     boqItems.forEach(suffix => {
         ['make', 'narration', 'qty', 'unit'].forEach(field => {
             const inputId = `input_boq_${field}_${suffix}`;
@@ -369,14 +341,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initial BOQ sync
+    // Initial sync
     boqItems.forEach(suffix => {
         ['make', 'narration', 'qty', 'unit'].forEach(field => {
             const inputId = `input_boq_${field}_${suffix}`;
             const input = document.getElementById(inputId);
-            if (input) {
-                updateBoq(suffix, field, input.value);
-            }
+            if (input) updateBoq(suffix, field, input.value);
         });
     });
 
@@ -394,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (saved) {
             const quotes = JSON.parse(saved);
             if (quotes.length > 0) {
-                // Find the maximum ID used so far to ensure we always increment correctly
                 const ids = quotes.map(q => {
                     const idPart = q.formData ? q.formData.quoteId : q.id.split('-').pop();
                     return parseInt(idPart) || 0;
@@ -443,11 +412,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let quotes = JSON.parse(localStorage.getItem('techredo_quotations') || '[]');
         const existingIndex = quotes.findIndex(q => q.id === quoteObj.id);
-        if (existingIndex > -1) {
-            quotes[existingIndex] = quoteObj;
-        } else {
-            quotes.unshift(quoteObj);
-        }
+        if (existingIndex > -1) quotes[existingIndex] = quoteObj;
+        else quotes.unshift(quoteObj);
         localStorage.setItem('techredo_quotations', JSON.stringify(quotes));
     }
 
@@ -468,37 +434,24 @@ document.addEventListener('DOMContentLoaded', () => {
             mainQuoteRateInput.value = data.rate || '';
             mainQuoteQtyInput.value = data.qty || '';
 
-            // Handle Scope
             if (data.scope && data.scope.length > 0) {
-                const scopeContainer = document.querySelector('.scope-section');
-                const existingItems = scopeContainer.querySelectorAll('.scope-item');
-                existingItems.forEach(item => item.remove());
-
+                const sContainer = document.querySelector('.scope-section');
+                sContainer.querySelectorAll('.scope-item').forEach(item => item.remove());
                 data.scope.forEach(val => {
                     const div = document.createElement('div');
                     div.className = 'scope-item';
                     div.innerHTML = `<input type="text" class="scope-input" value="${val}">`;
-                    scopeContainer.insertBefore(div, document.getElementById('mainQuoteRate').closest('.form-row'));
+                    sContainer.insertBefore(div, document.getElementById('mainQuoteRate').closest('.form-row'));
                 });
             }
 
-            // Handle BOQ
             if (data.boq) {
                 data.boq.forEach(item => {
-                    const makeInput = document.getElementById(`input_boq_make_${item.suffix}`);
-                    const narrInput = document.getElementById(`input_boq_narration_${item.suffix}`);
-                    const qtyInput = document.getElementById(`input_boq_qty_${item.suffix}`);
-                    const unitInput = document.getElementById(`input_boq_unit_${item.suffix}`);
-
-                    if (makeInput) makeInput.value = item.make || '';
-                    if (narrInput) narrInput.value = item.narration || '';
-                    if (qtyInput) qtyInput.value = item.qty || '';
-                    if (unitInput) unitInput.value = item.unit || '';
-
-                    updateBoq(item.suffix, 'make', item.make || '');
-                    updateBoq(item.suffix, 'narration', item.narration || '');
-                    updateBoq(item.suffix, 'qty', item.qty || '');
-                    updateBoq(item.suffix, 'unit', item.unit || '');
+                    ['make', 'narration', 'qty', 'unit'].forEach(f => {
+                        const i = document.getElementById(`input_boq_${f}_${item.suffix}`);
+                        if (i) i.value = item[f] || '';
+                        updateBoq(item.suffix, f, item[f] || '');
+                    });
                 });
             }
             updatePreview();
