@@ -152,56 +152,58 @@
                                     }
 
                                     .boq-row {
+                                        display: block;
+                                        padding: 15px 0;
+                                        border-bottom: 2px solid #f0f0f0;
+                                    }
+
+                                    .boq-row .row-header {
                                         display: flex;
-                                        flex-wrap: wrap;
-                                        gap: 8px;
-                                        align-items: center;
-                                        padding: 12px 0;
-                                        border-bottom: 1px solid #eee;
+                                        justify-content: space-between;
+                                        margin-bottom: 10px;
+                                        background: #f8f9fa;
+                                        padding: 5px 10px;
+                                        border-radius: 4px;
                                     }
 
                                     .boq-row span:first-child {
-                                        width: 30px;
                                         font-weight: bold;
-                                        color: #666;
+                                        color: #dc2626;
                                     }
 
                                     .boq-row label {
-                                        flex: 1;
-                                        font-weight: 600;
-                                        color: #333;
+                                        font-weight: 700;
+                                        color: #111;
+                                        font-size: 1rem;
                                     }
 
-                                    /* Specific Input Layouts for Mobile */
-                                    /* Make takes full width */
-                                    .boq-row input[id^="input_boq_make"],
-                                    .boq-row input[id^="input_boq_narration"] {
-                                        width: 100%;
-                                        order: 2;
+                                    .boq-input-group {
+                                        margin-bottom: 10px;
                                     }
 
-                                    .boq-row input[id^="input_boq_qty"] {
-                                        flex: 2;
-                                        order: 3;
-                                    }
-
-                                    .boq-row input[id^="input_boq_unit"] {
-                                        flex: 1;
-                                        order: 3;
+                                    .boq-input-group label {
+                                        display: block;
+                                        font-size: 0.75rem;
+                                        color: #666;
+                                        margin-bottom: 4px;
+                                        text-transform: uppercase;
+                                        letter-spacing: 0.5px;
                                     }
 
                                     .boq-row input {
-                                        padding: 10px;
-                                        border: 1px solid #ced4da;
-                                        border-radius: 5px;
-                                        font-size: 0.95rem;
+                                        width: 100% !important;
+                                        padding: 12px;
+                                        border: 1px solid #ddd;
+                                        border-radius: 6px;
+                                        font-size: 1rem;
                                         box-sizing: border-box;
+                                        background: #fff;
                                     }
 
                                     .boq-row input:focus {
                                         border-color: #dc2626;
                                         outline: 0;
-                                        box-shadow: 0 0 0 0.1rem rgba(220, 38, 38, .1);
+                                        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
                                     }
 
                                     /* Desktop Styles (> 768px) */
@@ -230,10 +232,22 @@
                                             border-radius: 0;
                                         }
 
-                                        /* Reset grid columns for inputs to respect row layout */
-                                        .boq-row input[id^="input_boq_make"],
-                                        .boq-row input[id^="input_boq_narration"] {
-                                            grid-column: auto;
+                                        /* Flatten nested mobile structure for desktop grid */
+                                        .boq-row .row-header,
+                                        .boq-row .boq-input-group {
+                                            display: contents;
+                                        }
+
+                                        /* Hide Sn prefix and mobile-only labels on Desktop */
+                                        .boq-row .row-header span {
+                                            font-size: 0.85rem;
+                                            color: #666;
+                                            font-weight: bold;
+                                        }
+
+                                        /* Hide mobile labels in desktop view */
+                                        .boq-input-group label {
+                                            display: none !important;
                                         }
 
                                         .boq-row:hover {
@@ -241,29 +255,13 @@
                                         }
 
                                         .boq-row label {
-                                            grid-column: auto;
-                                            margin-bottom: 0;
-                                            font-size: 0.9rem;
+                                            font-size: 0.85rem;
                                             font-weight: 500;
-                                        }
-
-                                        .boq-row span:first-child {
-                                            background: none;
-                                            padding: 0;
-                                            color: #666;
-                                            font-weight: bold;
-                                        }
-
-                                        .boq-row input[id^="input_boq_make"] {
-                                            grid-column: auto;
-                                        }
-
-                                        .boq-row input[id^="input_boq_narration"] {
-                                            grid-column: auto;
+                                            color: #444;
                                         }
 
                                         .boq-row input {
-                                            padding: 6px 10px;
+                                            padding: 8px 10px;
                                             font-size: 0.85rem;
                                         }
                                     }
@@ -275,118 +273,147 @@
 
                                     <!-- 01 PV PANEL -->
                                     <div class="boq-row">
-                                        <span>01</span>
-                                        <label title="PV PANEL">PV PANEL</label>
-                                        <input type="text" id="input_boq_make_01" value="WAAREE / VIKRAM"
-                                            placeholder="Make">
-                                        <input type="text" id="input_boq_narration_01" value="MONO HALFCUT BIFACIAL"
-                                            placeholder="Narration">
-                                        <input type="text" id="input_boq_qty_01" value="100" placeholder="Qty">
-                                        <input type="text" id="input_boq_unit_01" value="KW" placeholder="Unit">
+                                        <div class="row-header"><span>#01</span><label>PV PANEL</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_01" value="WAAREE / VIKRAM"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_01" value="MONO HALFCUT BIFACIAL"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_01" value="100"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_01" value="KW"></div>
                                     </div>
 
                                     <!-- 02 PV INVERTER -->
                                     <div class="boq-row">
-                                        <span>02</span>
-                                        <label title="PV INVERTER">PV INVERTER</label>
-                                        <input type="text" id="input_boq_make_02" value="VSOLE / EASTMAN">
-                                        <input type="text" id="input_boq_narration_02"
-                                            value="ONGRID 5G PRO100K WIFI RMS">
-                                        <input type="text" id="input_boq_qty_02" value="01">
-                                        <input type="text" id="input_boq_unit_02" value="NOS">
+                                        <div class="row-header"><span>#02</span><label>PV INVERTER</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_02" value="VSOLE / EASTMAN"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_02" value="ONGRID 5G PRO100K WIFI RMS"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_02" value="01"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_02" value="NOS"></div>
                                     </div>
 
                                     <!-- 03 STRUCTURE -->
                                     <div class="boq-row">
-                                        <span>03</span>
-                                        <label title="MMS">MMS</label>
-                                        <input type="text" id="input_boq_make_03" value="SURYA/ APOLLO/ GPTL">
-                                        <input type="text" id="input_boq_narration_03"
-                                            value="GALVANISED IRON SQUARE PIPE">
-                                        <input type="text" id="input_boq_qty_03" value="FOR 100 KW">
-                                        <input type="text" id="input_boq_unit_03" value="--">
+                                        <div class="row-header"><span>#03</span><label>MMS</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_03" value="SURYA/ APOLLO/ GPTL"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_03" value="GALVANISED IRON SQUARE PIPE"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_03" value="FOR 100 KW"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_03" value="--"></div>
                                     </div>
 
                                     <!-- 04 ACDB -->
                                     <div class="boq-row">
-                                        <span>04</span>
-                                        <label title="ACDB BOX">ACDB BOX</label>
-                                        <input type="text" id="input_boq_make_04" value="TECHREDO">
-                                        <input type="text" id="input_boq_narration_04"
-                                            value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
-                                        <input type="text" id="input_boq_qty_04" value="AS PER SLD">
-                                        <input type="text" id="input_boq_unit_04" value="--">
+                                        <div class="row-header"><span>#04</span><label>ACDB BOX</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_04" value="TECHREDO"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_04" value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
+                                        </div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_04" value="AS PER SLD"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_04" value="--"></div>
                                     </div>
 
                                     <!-- 05 DCDB -->
                                     <div class="boq-row">
-                                        <span>05</span>
-                                        <label title="DCDB BOX">DCDB BOX</label>
-                                        <input type="text" id="input_boq_make_05" value="TECHREDO">
-                                        <input type="text" id="input_boq_narration_05"
-                                            value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
-                                        <input type="text" id="input_boq_qty_05" value="AS PER SLD">
-                                        <input type="text" id="input_boq_unit_05" value="--">
+                                        <div class="row-header"><span>#05</span><label>DCDB BOX</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_05" value="TECHREDO"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_05" value="SWITCHGEAR- ABB/ L&T/ SCHNIEDER">
+                                        </div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_05" value="AS PER SLD"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_05" value="--"></div>
                                     </div>
 
                                     <!-- 06 CABLE TRAY -->
                                     <div class="boq-row">
-                                        <span>06</span>
-                                        <label title="CABLE TRAY">CABLE TRAY</label>
-                                        <input type="text" id="input_boq_make_06" value="OBO/ ANY">
-                                        <input type="text" id="input_boq_narration_06" value="45X25 MM">
-                                        <input type="text" id="input_boq_qty_06" value="AS REQ">
-                                        <input type="text" id="input_boq_unit_06" value="--">
+                                        <div class="row-header"><span>#06</span><label>CABLE TRAY</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_06" value="OBO/ ANY"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_06" value="45X25 MM"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_06" value="AS REQ"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_06" value="--"></div>
                                     </div>
 
                                     <!-- 07 CABLES -->
                                     <div class="boq-row">
-                                        <span>07</span>
-                                        <label title="CABLES">CABLES</label>
-                                        <input type="text" id="input_boq_make_07" value="POLYCAB/ RR/ HAVELLES">
-                                        <input type="text" id="input_boq_narration_07" value="AS PER CAPACITY">
-                                        <input type="text" id="input_boq_qty_07" value="AS REQ">
-                                        <input type="text" id="input_boq_unit_07" value="--">
+                                        <div class="row-header"><span>#07</span><label>CABLES</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_07" value="POLYCAB/ RR/ HAVELLES"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_07" value="AS PER CAPACITY"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_07" value="AS REQ"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_07" value="--"></div>
                                     </div>
 
                                     <!-- 08 EARTHING -->
                                     <div class="boq-row">
-                                        <span>08</span>
-                                        <label title="EARTHING">EARTHING</label>
-                                        <input type="text" id="input_boq_make_08" value="TECHREDO">
-                                        <input type="text" id="input_boq_narration_08" value="TRADITIONAL 3 OHM">
-                                        <input type="text" id="input_boq_qty_08" value="03">
-                                        <input type="text" id="input_boq_unit_08" value="NOS">
+                                        <div class="row-header"><span>#08</span><label>EARTHING</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_08" value="TECHREDO"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_08" value="TRADITIONAL 3 OHM"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_08" value="03"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_08" value="NOS"></div>
                                     </div>
 
                                     <!-- 09 LA -->
                                     <div class="boq-row">
-                                        <span>09</span>
-                                        <label title="LIGHTING ARRESTOR">LA</label>
-                                        <input type="text" id="input_boq_make_09" value="SGI/ STANDARD">
-                                        <input type="text" id="input_boq_narration_09" value="COPPER WITH EARTHING">
-                                        <input type="text" id="input_boq_qty_09" value="01">
-                                        <input type="text" id="input_boq_unit_09" value="NOS">
+                                        <div class="row-header"><span>#09</span><label>LA</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_09" value="SGI/ STANDARD"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_09" value="COPPER WITH EARTHING"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_09" value="01"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_09" value="NOS"></div>
                                     </div>
 
                                     <!-- 10 NET METER -->
                                     <div class="boq-row">
-                                        <span>10</span>
-                                        <label title="NET METER">NET METER</label>
-                                        <input type="text" id="input_boq_make_10" value="L&T/ GENUS/ HPL">
-                                        <input type="text" id="input_boq_narration_10" value="3 PH BIDIRECTIONAL">
-                                        <input type="text" id="input_boq_qty_10" value="01">
-                                        <input type="text" id="input_boq_unit_10" value="NOS">
+                                        <div class="row-header"><span>#10</span><label>NET METER</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_10" value="L&T/ GENUS/ HPL"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_10" value="3 PH BIDIRECTIONAL"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_10" value="01"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_10" value="NOS"></div>
                                     </div>
 
                                     <!-- 11 GEN METER -->
                                     <div class="boq-row">
-                                        <span>11</span>
-                                        <label title="GEN. METER">GEN. METER</label>
-                                        <input type="text" id="input_boq_make_11" value="L&T/ GENUS/ HPL">
-                                        <input type="text" id="input_boq_narration_11" value="3 PH SOLAR">
-                                        <input type="text" id="input_boq_qty_11" value="01">
-                                        <input type="text" id="input_boq_unit_11" value="NOS">
+                                        <div class="row-header"><span>#11</span><label>GEN. METER</label></div>
+                                        <div class="boq-input-group"><label>Make</label><input type="text"
+                                                id="input_boq_make_11" value="L&T/ GENUS/ HPL"></div>
+                                        <div class="boq-input-group"><label>Narration</label><input type="text"
+                                                id="input_boq_narration_11" value="3 PH SOLAR"></div>
+                                        <div class="boq-input-group"><label>Qty</label><input type="text"
+                                                id="input_boq_qty_11" value="01"></div>
+                                        <div class="boq-input-group"><label>Unit</label><input type="text"
+                                                id="input_boq_unit_11" value="NOS"></div>
                                     </div>
                                 </div>
                             </div>
