@@ -611,16 +611,16 @@ select:focus {
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .logo-area {
+    .brand {
         margin-bottom: 0;
     }
 
-    .logo-area h1 {
+    .brand h1 {
         font-size: 1.2rem;
         margin: 0;
     }
 
-    .logo-area p {
+    .brand p {
         display: none;
     }
 
@@ -641,6 +641,16 @@ select:focus {
 
     .sidebar-footer {
         display: none;
+    }
+
+    /* Smaller Right-Aligned Button */
+    .btn-new {
+        width: auto !important;
+        margin: 0 !important;
+        padding: 0.6rem 1rem !important;
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     /* Main Content */
