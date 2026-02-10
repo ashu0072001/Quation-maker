@@ -202,15 +202,44 @@ document.addEventListener('DOMContentLoaded', () => {
             margin: 0,
             filename: 'Quotation.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 3, useCORS: true },
+            html2canvas: {
+                scale: 3,
+                useCORS: true,
+                letterRendering: true,
+                logging: false
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
+        // Helper to capture each page from a full-sized clone to avoid mobile scaling/clipping issues
+        const capturePage = async (elementId) => {
+            const element = document.getElementById(elementId);
+            if (!element) return null;
+
+            // Clone and prepare for recording (unscaled, full size)
+            const clone = element.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '210mm';
+            clone.style.height = '297mm';
+            clone.style.transform = 'none';
+            clone.style.margin = '0';
+            clone.style.visibility = 'visible';
+            clone.style.display = 'block';
+            clone.style.zIndex = '-9999';
+
+            document.body.appendChild(clone);
+            const buffer = await html2pdf().set(opt).from(clone).output('arraybuffer');
+            document.body.removeChild(clone);
+            return buffer;
+        };
+
         try {
-            // 1. Generate PDFs from HTML elements
-            const frontPagePdf = await html2pdf().set(opt).from(document.getElementById('frontPage')).output('arraybuffer');
-            const quotationPagePdf = await html2pdf().set(opt).from(document.getElementById('quotationPage')).output('arraybuffer');
-            const boqPagePdf = await html2pdf().set(opt).from(document.getElementById('boqPage')).output('arraybuffer');
+            // 1. Generate PDFs from HTML elements using the robust capture method
+            const frontPagePdf = await capturePage('frontPage');
+            const quotationPagePdf = await capturePage('quotationPage');
+            const boqPagePdf = await capturePage('boqPage');
 
             // 2. Fetch external PDFs
             const [permResp, lastResp] = await Promise.all([
@@ -234,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
 
             for (const item of pdfsToLoad) {
+                if (!item.buffer) continue;
                 const pdf = await PDFDocument.load(item.buffer);
                 const indices = item.all ? pdf.getPageIndices() : item.pages;
                 const copiedPages = await mergedPdf.copyPages(pdf, indices);
@@ -250,13 +280,13 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             URL.revokeObjectURL(url);
 
-            // 5. Open in new tab
-            window.open(url, '_blank');
+            // 5. Open in new tab (REMOVED: as per user request to stop annoying auto-opening)
+            // window.open(url, '_blank');
 
             // 6. Save Quotation to localStorage
             saveQuotation();
 
-            // 7. Auto-reload to refresh form
+            // 7. Auto-reload to refresh form and generate next Quote No.
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
@@ -318,7 +348,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let nextId = 1;
         if (saved) {
             const quotes = JSON.parse(saved);
-            nextId = quotes.length + 1;
+            if (quotes.length > 0) {
+                // Find the maximum ID used so far to ensure we always increment correctly
+                const ids = quotes.map(q => {
+                    const idPart = q.formData ? q.formData.quoteId : q.id.split('-').pop();
+                    return parseInt(idPart) || 0;
+                });
+                nextId = Math.max(...ids) + 1;
+            }
         }
 
         if (quoteYearInput) quoteYearInput.value = finYear;
