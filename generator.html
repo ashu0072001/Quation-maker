@@ -447,21 +447,24 @@
                         <div id="quotationPage" class="quotation-page A4"
                             style="padding: 10mm 15mm; position: relative; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
                             <!-- Header Row (Logo Left, Info Right) -->
+                            <!-- Centered Header Row (Logo and Info Stacked) -->
                             <div
-                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5mm; border-bottom: 0.5px solid #eee; padding-bottom: 3mm;">
-                                <!-- Left side Logo -->
-                                <div style="width: 40%;">
-                                    <img src="quotation_header.png" alt="TechRedo" style="width: 180px;">
+                                style="display: flex; flex-direction: column; align-items: center; margin-bottom: 5mm; border-bottom: 1px solid #eee; padding-bottom: 5mm; text-align: center;">
+                                <!-- Logo -->
+                                <div style="margin-bottom: 4mm;">
+                                    <img src="quotation_header.png" alt="TechRedo" style="width: 220px;">
                                 </div>
 
-                                <!-- Right side CIN/GSTIN details -->
-                                <div
-                                    style="width: 55%; text-align: right; font-size: 10pt; color: #444; line-height: 1.4; font-weight: bold;">
-                                    <p style="margin: 0;"><b>CIN:</b> U74999MH2019PTC331050 | <b>GSTIN:</b>
-                                        27AAHCT5344C1ZF</p>
+                                <!-- Company Details -->
+                                <div style="font-size: 10.5pt; color: #333; line-height: 1.6; font-weight: bold;">
+                                    <p style="margin: 0;">CIN: U74999MH2019PTC331050 | GSTIN: 27AAHCT5344C1ZF</p>
                                     <p style="margin: 0;">4160, GANGARAM PLOT, BHUSAWAL, DIST- JALGAON, MAHARASHTRA-
                                         425201</p>
-                                    <p style="margin: 0;">www.techredo.in | enquiry@techredo.in | +91 77 11 00 6999</p>
+                                    <div style="margin-top: 2mm; color: #000;">
+                                        <span>enquiry@techredo.in</span> &nbsp;|&nbsp;
+                                        <span>+91 77 11 00 6999</span> &nbsp;|&nbsp;
+                                        <span>www.techredo.in</span>
+                                    </div>
                                 </div>
                             </div>
 
