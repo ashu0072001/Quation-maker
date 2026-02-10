@@ -804,20 +804,26 @@ select:focus {
         display: block !important;
     }
 
-    /* Preview Section */
+    /* Preview Section Fixes */
     .preview-section {
-        padding: 0;
-        background: none;
+        padding: 1rem 0;
+        background: #cbd5e1;
         overflow-x: auto;
+        display: flex;
+        justify-content: center;
+        min-height: 400px;
     }
 
     .preview-container {
-        overflow-x: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        padding-bottom: 50px;
+        transform: scale(0.40);
+        /* Scale down significantly for mobile */
+        transform-origin: top center;
+        margin: 0 auto;
+        width: 210mm;
+        /* Force A4 width to keep internal layout consistent */
+        height: auto;
+        padding-bottom: 100px;
+        /* Extra space for scaled content */
     }
 }
 
