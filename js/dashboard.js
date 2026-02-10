@@ -12,19 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingState.style.display = 'flex';
             emptyState.style.display = 'none';
 
-            // Load from localStorage
+            // Load from MySQL Database
+            const response = await fetch('api.php?action=list');
+            const dbQuotes = await response.json();
+
+            // Load from localStorage as fallback/combined
             const saved = localStorage.getItem('techredo_quotations');
-            if (saved) {
-                allQuotations = JSON.parse(saved);
-            } else {
-                allQuotations = [];
-            }
+            const localQuotes = saved ? JSON.parse(saved) : [];
+
+            // Combine or prioritize database
+            // For now, let's show both but prioritize DB
+            const dbIds = new Set(dbQuotes.map(q => q.quoteNumber));
+            const filteredLocal = localQuotes.filter(q => !dbIds.has(q.quoteNumber));
+
+            allQuotations = [...dbQuotes, ...filteredLocal];
 
             renderQuotations();
 
         } catch (error) {
             console.error('Error loading quotations:', error);
-            allQuotations = [];
+            // Fallback to localStorage only
+            const saved = localStorage.getItem('techredo_quotations');
+            allQuotations = saved ? JSON.parse(saved) : [];
             renderQuotations();
         } finally {
             loadingState.style.display = 'none';
@@ -52,7 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function createQuotationCard(quote) {
         const card = document.createElement('div');
         card.className = 'quote-card';
-        card.onclick = () => viewQuotation(quote.id);
+
+        // If it has a DB ID, it's a database quote
+        const isDb = !!quote.id && !isNaN(quote.id);
+
+        card.onclick = (e) => {
+            if (isDb) {
+                // Open PDF in new tab
+                window.open(`api.php?action=view&id=${quote.id}`, '_blank');
+            } else {
+                // Open in editor (old local way)
+                viewQuotation(quote.id);
+            }
+        };
 
         const formattedDate = formatDate(quote.date);
         const formattedAmount = formatCurrency(quote.amount);
@@ -61,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.innerHTML = `
             <!-- External Link Icon -->
             <div class="external-icon">
-                <i class="fas fa-external-link-alt"></i>
+                <i class="fas ${isDb ? 'fa-file-pdf' : 'fa-edit'}"></i>
             </div>
 
             <!-- Card Header -->
@@ -70,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${quote.clientName}</h3>
                     <div class="card-location">
                         <i class="fas fa-map-marker-alt"></i>
-                        ${quote.location}
+                        ${quote.location || 'N/A'}
                     </div>
                 </div>
                 <span class="quote-number-badge">${quote.quoteNumber}</span>
@@ -78,13 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- Metrics Row -->
             <div class="metrics-row">
-                <!-- Capacity Badge -->
                 <div class="metric-badge capacity">
                     <div class="metric-label">Capacity</div>
                     <div class="metric-value">${formattedCapacity}</div>
                 </div>
-
-                <!-- Amount Badge -->
                 <div class="metric-badge amount">
                     <div class="metric-label">Amount</div>
                     <div class="metric-value">${formattedAmount}</div>
@@ -97,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="far fa-calendar"></i>
                     ${formattedDate}
                 </span>
-                <span class="view-details">View Details →</span>
+                <span class="view-details">${isDb ? 'View PDF' : 'Edit Details'} →</span>
             </div>
         `;
 

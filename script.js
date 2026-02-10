@@ -313,23 +313,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) { }
             }
 
-            // 4. Download
+            // 4. Download & Save to Database
             const mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+
+            // Trigger local download
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Quotation_${clientNameInput.value || 'Client'}.pdf`;
+            link.download = `Quotation_${quoteIdInput.value || 'New'}.pdf`;
+            document.body.appendChild(link);
             link.click();
-            URL.revokeObjectURL(url);
+            document.body.removeChild(link);
 
-            saveQuotation();
+            // 5. Upload to MySQL Database
+            if (loaderText) loaderText.textContent = "Saving to Database...";
+            const quoteData = saveQuotation(); // Get current state
 
-            if (loader) loader.innerHTML = "<h2>Download Started!</h2><p>Page will refresh in 2s...</p>";
+            const formData = new FormData();
+            formData.append('json_data', JSON.stringify(quoteData));
+            formData.append('pdf_file', blob, 'quotation.pdf');
 
+            try {
+                const response = await fetch('api.php?action=save', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                console.log('Database Save:', result);
+            } catch (saveError) {
+                console.error('Error saving to MySQL:', saveError);
+            }
+
+            // Cleanup
             setTimeout(() => {
+                document.body.classList.remove('printing-mode');
+                pdfLoader.style.display = 'none';
                 window.location.reload();
-            }, 2500);
+            }, 1000);
 
         } catch (error) {
             console.error("Critical error generating PDF:", error);
@@ -436,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existingIndex > -1) quotes[existingIndex] = quoteObj;
         else quotes.unshift(quoteObj);
         localStorage.setItem('techredo_quotations', JSON.stringify(quotes));
+        return quoteObj;
     }
 
     function loadQuotationData(id) {
