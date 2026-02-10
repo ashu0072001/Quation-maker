@@ -236,7 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 logging: false,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: 794
+                windowWidth: 794,
+                width: 794
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
         };
