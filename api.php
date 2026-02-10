@@ -14,7 +14,7 @@ header('Access-Control-Allow-Headers: Content-Type');
 $db_host = 'localhost';
 $db_user = 'root';      // Update this
 $db_pass = '';          // Update this
-$db_name = 'techredo_quotations'; // Update this
+$db_name = 'integf_techredo_quotations'; // Updated from SQL dump
 
 // Create connection
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
@@ -56,7 +56,6 @@ function handleSave($conn) {
     $quote_no = $data['quoteNumber'];
     $client_name = $data['clientName'];
     $location = $data['location'];
-    $mobile = $data['mobile'];
     $total_amount = $data['amount'];
     $q_date = $data['date'];
     $json_string = $_POST['json_data'];
@@ -70,17 +69,19 @@ function handleSave($conn) {
     $stmt->execute();
     $result = $stmt->get_result();
     
+    $pdf_null = NULL; // Helper for send_long_data
+
     if ($result->num_rows > 0) {
         // Update
-        $stmt_update = $conn->prepare("UPDATE quotations SET client_name=?, location=?, mobile=?, total_amount=?, q_date=?, json_data=?, pdf_blob=? WHERE quote_no=?");
-        $stmt_update->bind_param("ssssssbs", $client_name, $location, $mobile, $total_amount, $q_date, $json_string, $pdf_null, $quote_no);
-        $stmt_update->send_long_data(6, $pdf_blob);
+        $stmt_update = $conn->prepare("UPDATE quotations SET client_name=?, location=?, total_amount=?, q_date=?, json_data=?, pdf_blob=? WHERE quote_no=?");
+        $stmt_update->bind_param("sssssbs", $client_name, $location, $total_amount, $q_date, $json_string, $pdf_null, $quote_no);
+        $stmt_update->send_long_data(5, $pdf_blob);
         $res = $stmt_update->execute();
     } else {
         // Insert
-        $stmt_insert = $conn->prepare("INSERT INTO quotations (quote_no, client_name, location, mobile, total_amount, q_date, json_data, pdf_blob) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt_insert->bind_param("sssssssb", $quote_no, $client_name, $location, $mobile, $total_amount, $q_date, $json_string, $pdf_null);
-        $stmt_insert->send_long_data(7, $pdf_blob);
+        $stmt_insert = $conn->prepare("INSERT INTO quotations (quote_no, client_name, location, total_amount, q_date, json_data, pdf_blob) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt_insert->bind_param("ssssssb", $quote_no, $client_name, $location, $total_amount, $q_date, $json_string, $pdf_null);
+        $stmt_insert->send_long_data(6, $pdf_blob);
         $res = $stmt_insert->execute();
     }
 
@@ -93,7 +94,7 @@ function handleSave($conn) {
 
 function handleList($conn) {
     // We don't fetch the heavy pdf_blob for the list
-    $sql = "SELECT id, quote_no, client_name, location, mobile, total_amount, q_date, created_at FROM quotations ORDER BY created_at DESC";
+    $sql = "SELECT id, quote_no, client_name, location, total_amount, q_date, created_at FROM quotations ORDER BY created_at DESC";
     $result = $conn->query($sql);
     $quotes = [];
 
@@ -104,7 +105,6 @@ function handleList($conn) {
                 'quoteNumber' => $row['quote_no'],
                 'clientName' => $row['client_name'],
                 'location' => $row['location'],
-                'mobile' => $row['mobile'],
                 'amount' => $row['total_amount'],
                 'date' => $row['q_date'],
                 'createdAt' => $row['created_at']
