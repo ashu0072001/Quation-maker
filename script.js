@@ -198,27 +198,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     generatePdfBtn.addEventListener('click', async () => {
+        const loader = document.getElementById('pdfLoader');
+        if (loader) loader.style.display = 'flex';
+
         const opt = {
             margin: 0,
             filename: 'Quotation.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
+            image: { type: 'jpeg', quality: 0.95 },
             html2canvas: {
-                scale: 2, // 2 is safer for mobile memory than 3
+                scale: 1.5, // Safer for mobile memory
                 useCORS: true,
                 letterRendering: true,
                 logging: false,
                 scrollX: 0,
-                scrollY: 0
+                scrollY: 0,
+                windowWidth: 800
             },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
         };
 
-        // Highly robust capture: Clones to body, waits for images, and uses a paint delay
+        // Ultimate robust capture for mobile
         const capturePage = async (elementId) => {
             const element = document.getElementById(elementId);
             if (!element) return null;
 
-            // Temporary container to ensure element is rendered at full size
+            // 1. Temporarily override body styles to allow full capture
+            const originalOverflow = document.body.style.overflow;
+            const originalHeight = document.body.style.height;
+            document.body.style.overflow = 'visible';
+            document.body.style.height = 'auto';
+
+            // 2. Clone the element
             const clone = element.cloneNode(true);
             Object.assign(clone.style, {
                 position: 'absolute',
@@ -229,55 +239,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 transform: 'none',
                 visibility: 'visible',
                 display: 'block',
-                zIndex: '9999',
+                zIndex: '15000',
                 background: 'white',
                 margin: '0',
-                padding: '10mm 15mm'
+                opacity: '1'
             });
 
-            // Special handling for pages with different padding
-            if (elementId === 'frontPage') {
-                clone.style.padding = '0';
-            } else if (elementId === 'boqPage') {
-                clone.style.padding = '15mm';
-            }
+            if (elementId === 'frontPage') clone.style.padding = '0';
+            else if (elementId === 'boqPage') clone.style.padding = '15mm';
+            else clone.style.padding = '10mm 15mm';
 
             document.body.appendChild(clone);
 
-            // Ensure all images are loaded before capture
-            const imgs = Array.from(clone.querySelectorAll('img'));
-            await Promise.all(imgs.map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(res => { img.onload = res; img.onerror = res; });
-            }));
+            try {
+                await document.fonts.ready;
+                const imgs = Array.from(clone.querySelectorAll('img'));
+                await Promise.all(imgs.map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(res => { img.onload = res; img.onerror = res; });
+                }));
 
-            // Allow browser to paint the clone
-            await new Promise(r => setTimeout(r, 600));
+                await new Promise(r => setTimeout(r, 1000));
 
-            // Use the full Promise-based html2pdf API for better consistency
-            const buffer = await html2pdf().set(opt).from(clone).toPdf().get('pdf').output('arraybuffer');
-
-            document.body.removeChild(clone);
-            return buffer;
+                const buffer = await html2pdf().set(opt).from(clone).toPdf().get('pdf').output('arraybuffer');
+                return buffer;
+            } finally {
+                document.body.removeChild(clone);
+                document.body.style.overflow = originalOverflow;
+                document.body.style.height = originalHeight;
+            }
         };
 
         try {
-            // Scroll to top to prevention capture offsets
             window.scrollTo(0, 0);
 
-            // 1. Generate PDFs from HTML elements sequentially
+            // 1. Capture HTML pages sequentially
             const frontPagePdf = await capturePage('frontPage');
-            const quotationPagePdf = await capturePage('quotationPage');
             const boqPagePdf = await capturePage('boqPage');
+            const quotationPagePdf = await capturePage('quotationPage');
 
             // 2. Fetch external PDFs
-            const [permResp, lastResp] = await Promise.all([
-                fetch('Permanent.pdf'),
-                fetch('last.pdf')
-            ]);
+            const fetchPdf = async (url) => {
+                try {
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    return await resp.arrayBuffer();
+                } catch (e) {
+                    console.warn(`Could not fetch ${url}, skipping:`, e);
+                    return null;
+                }
+            };
 
-            const permBuffer = await permResp.arrayBuffer();
-            const lastBuffer = await lastResp.arrayBuffer();
+            const permBuffer = await fetchPdf('Permanent.pdf');
+            const lastBuffer = await fetchPdf('last.pdf');
 
             // 3. Merge PDFs
             const { PDFDocument } = PDFLib;
@@ -293,13 +307,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (const item of pdfsToLoad) {
                 if (!item.buffer) continue;
-                const pdf = await PDFDocument.load(item.buffer);
-                const indices = item.all ? pdf.getPageIndices() : item.pages;
-                const copiedPages = await mergedPdf.copyPages(pdf, indices);
-                copiedPages.forEach(p => mergedPdf.addPage(p));
+                try {
+                    const pdf = await PDFDocument.load(item.buffer);
+                    const indices = item.all ? pdf.getPageIndices() : item.pages;
+                    const copiedPages = await mergedPdf.copyPages(pdf, indices);
+                    copiedPages.forEach(p => mergedPdf.addPage(p));
+                } catch (e) {
+                    console.error("Error loading PDF partial:", e);
+                }
             }
 
-            // 4. Save and Download
+            // 4. Finalize and Download
             const mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
@@ -309,17 +327,18 @@ document.addEventListener('DOMContentLoaded', () => {
             link.click();
             URL.revokeObjectURL(url);
 
-            // 6. Save Quotation to localStorage
             saveQuotation();
 
-            // 7. Auto-reload to refresh form and generate next Quote No.
+            if (loader) loader.innerHTML = "<h2>Download Started!</h2><p>Page will refresh in a few seconds...</p>";
+
             setTimeout(() => {
                 window.location.reload();
-            }, 1000);
+            }, 3000);
 
         } catch (error) {
-            console.error("Error generating PDF:", error);
+            console.error("Critical error generating PDF:", error);
             alert("Failed to generate PDF. check console.");
+            if (loader) loader.style.display = 'none';
         }
     });
 
